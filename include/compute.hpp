@@ -4,7 +4,7 @@
 #ifndef __compute_hpp__
 #define __compute_hpp__
 #include <vector>
-#include "bbfmm.h"
+//#include "bbfmm.h"
 #include "environment.hpp" 
 #include "kernel_Types.hpp"
 #include <omp.h>

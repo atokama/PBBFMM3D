@@ -3,7 +3,9 @@
 */
 
 #include"H2_3D_Tree.hpp"
-#include"bbfmm.h"
+//#include"bbfmm.h"
+#include <mkl_lapack_stdcall.h>
+#include <mkl_blas_stdcall.h>
 
 #define HOMO_THRESHOLD  1e-1          // threshold for homogeneous kenrel
 #define FFTW_FLAG       FFTW_ESTIMATE // option for fftw plan type
@@ -247,6 +249,7 @@ void H2_3D_Tree::FMMReadMatrices(double **K, double **U, double **VT, doft *cuto
  * symmetric kernel
  */
 
+#define M_PI 3.14159265359
 
 void H2_3D_Tree::ComputeKernelCheb(double *Kweights, int interpolation_order,double epsilon, doft *dof, char*Kmat, char *Umat, char *Vmat, int symm, double alphaAdjust, double boxLen,  bool first_time_call) {
     
@@ -586,8 +589,9 @@ void H2_3D_Tree::ComputeKernelCheb(double *Kweights, int interpolation_order,dou
 void H2_3D_Tree::ComputeKernelUnif(int interpolation_order, doft dof, char *Kmat,
                double alphaAdjust, double len) {
   int i, k1, k2, k3, l1, l2, l3;    
-  double nodes[interpolation_order];
-  GridPos1d(alphaAdjust, len, interpolation_order, 0, nodes);
+  std::vector<double> nodes;//[interpolation_order];
+  nodes.resize(interpolation_order);
+  GridPos1d(alphaAdjust, len, interpolation_order, 0, nodes.data());
 
   int vecSize = 2*interpolation_order-1, reducedMatSize = pow(vecSize, 3);
   int M2LSize = reducedMatSize;
@@ -616,13 +620,13 @@ void H2_3D_Tree::ComputeKernelUnif(int interpolation_order, doft dof, char *Kmat
 
             int count=0;
             for (l1=0; l1<vecSize; l1++) {
-                GetPosition(interpolation_order, l1, &targetpos.x, &sourcepos.x, nodes);
+                GetPosition(interpolation_order, l1, &targetpos.x, &sourcepos.x, nodes.data());
                 sourcepos.x += scenter.x;
                 for (l2=0; l2<vecSize; l2++) {
-                    GetPosition(interpolation_order, l2, &targetpos.y, &sourcepos.y, nodes);
+                    GetPosition(interpolation_order, l2, &targetpos.y, &sourcepos.y, nodes.data());
                     sourcepos.y += scenter.y;
                     for (l3=0; l3<vecSize; l3++, count++) {
-                        GetPosition(interpolation_order, l3, &targetpos.z, &sourcepos.z, nodes);
+                        GetPosition(interpolation_order, l3, &targetpos.z, &sourcepos.z, nodes.data());
                         sourcepos.z += scenter.z;
 
                         MatM2L[countM2L*M2LSize+count] = EvaluateKernel(targetpos, sourcepos);

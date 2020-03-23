@@ -5,8 +5,8 @@
 #ifndef __H2_3D_Tree_hpp__
 #define __H2_3D_Tree_hpp__
 #include <vector>
-#include"bbfmm.h"
-#include"environment.hpp"
+#include "bbfmm.h"
+#include "environment.hpp"
 #include <fftw3.h>    // fft transform of real input
 #define EQUAL_DOUBLE_EPS 1e-6
 

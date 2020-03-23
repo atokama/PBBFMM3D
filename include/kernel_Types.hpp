@@ -4,8 +4,8 @@
 #ifndef __kernel_Types_hpp__
 #define __kernel_Types_hpp__
 
-#include"H2_3D_Tree.hpp"
-#include"environment.hpp"
+#include "H2_3D_Tree.hpp"
+#include "environment.hpp"
 /*! Laplacian kernel */
 class kernel_Laplacian: public H2_3D_Tree {
 public:

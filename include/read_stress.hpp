@@ -2,7 +2,7 @@
  source file to field, source and charge information from binary files.
 */
 
-#include"environment.hpp"
+#include "environment.hpp"
 using namespace std;
 
 void read_Stress(const string& filenameStress, double *stress_dir, const int& N) {

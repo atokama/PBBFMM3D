@@ -5,7 +5,7 @@
 #ifndef __bbfmm3d_hpp__
 #define __bbfmm3d_hpp__
 
-#include "bbfmm.h"
+//#include "bbfmm.h"
 #include "test.hpp"
 #include "compute.hpp"
 #include "read_sources.hpp"
