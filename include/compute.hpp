@@ -9,7 +9,7 @@
 #include "kernel_Types.hpp"
 #include <omp.h>
 #include <fftw3.h>    // fft transform of real input
-#include <unistd.h>
+//#include <unistd.h>
 #include <limits.h>
 
 #define FFTW_FLAG       FFTW_ESTIMATE // option for fftw plan type
@@ -243,8 +243,9 @@ void H2_3D_Compute<T>::UpwardPass(nodeT **A, vector3 *source, double *weight, do
                     else
                         r[l] =  1;
                 
-		        double SS[n3*this->nCols];
-                Moment2Moment(n, r, Schild, SS, dof, Cweights);
+				std::vector<double> SS{};
+				SS.resize(n3*this->nCols);
+                Moment2Moment(n, r, Schild, SS.data(), dof, Cweights);
                 
                 if (!use_chebyshev) {
                     if (Schild != NULL) {
@@ -352,7 +353,8 @@ void H2_3D_Compute<T>::UpwardPass(nodeT **A, vector3 *source, double *weight, do
     } else {
         int n3    = n*n*n;
         double *x = (*A)->sourceval;
-        double Sw[n3*this->nCols];
+        std::vector<double> Sw{};
+        Sw.resize(n3 * this->nCols) ;
         
         for (int col = 0; col < this->nCols; col++)
             for (int l=0;l<n3;l++) {
@@ -370,7 +372,7 @@ void H2_3D_Compute<T>::UpwardPass(nodeT **A, vector3 *source, double *weight, do
         (*A)->proxysval = (double*) malloc(cutoff->s * this->nCols * sizeof(double));
 
         // TODO
-        dgemm_(&trans, &trans, &cutoff->s, &this->nCols, &n3, &a, VT + Vsize*lvl_shift, &cutoff->s, Sw, &n3,
+        dgemm_(&trans, &trans, &cutoff->s, &this->nCols, &n3, &a, VT + Vsize*lvl_shift, &cutoff->s, Sw.data(), &n3,
            &beta, (*A)->proxysval, &cutoff->s);
       }
 }
@@ -478,9 +480,10 @@ void H2_3D_Compute<T>::FarFieldInteractions(double *E, int *Ktable, double *U,
         int incr     =  1;
         char trans   = 'n';
         double alpha =  0;
-        double F_m2l[n*n*n*this->nCols];
+				std::vector<double> F_m2l{};
+				F_m2l.resize(n*n*n*this->nCols);
         dgemm_(&trans, &trans, &dofn3_f, &this->nCols, &cutoff_f, &scale, U + Usize*lvl_shift,
-           &dofn3_f, Pf, &cutoff_f, &alpha, F_m2l, &dofn3_f);
+           &dofn3_f, Pf, &cutoff_f, &alpha, F_m2l.data(), &dofn3_f);
 
         for (int col=0;col<this->nCols; col++)
             for (int i = 0; i < n3; i++)
@@ -784,7 +787,10 @@ void H2_3D_Compute<T>::Local2Local(int n, double *r, double *F, double *Fchild, 
 	int n2 = n*n;                       // n2 = n^2
 	int n3 = n*n*n;                     // n3 = n^3
 	
-	double Fx[n3*this->nCols], Fy[n3*this->nCols];
+	std::vector<double> Fx{};
+	std::vector<double> Fy{};
+	Fx.resize(n3*this->nCols); 
+	Fy.resize(n3*this->nCols);
     
     
     // Recover the index of the child box
@@ -945,7 +951,10 @@ void H2_3D_Compute<T>::Moment2Moment(int n, double *r, double *Schild, double *S
 	int n2 = n*n;                       // n2 = n^2
 	int n3 = n*n*n;                     // n3 = n^3
 		
-	double Sy[n3*this->nCols], Sz[n3*this->nCols];
+	std::vector<double> Sy{};
+	std::vector<double> Sz{};
+	Sy.resize(n3*this->nCols);
+ 	Sz.resize(n3*this->nCols);
     
     
     // Recover the index of the child box

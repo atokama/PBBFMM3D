@@ -18,44 +18,18 @@ set(src src/kernel_Types.cpp
  	src/write_Into_Binary_File.cpp)
 source_group("Source Files" FILES ${src})
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /openmp")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /openmp")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /openmp")
-
-
 add_library(pbb_fmm3d SHARED ${incl} ${src})
+target_include_directories(pbb_fmm3d PUBLIC "include")
 
-set(MKL_ROOT
-    "C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl")
-
-set(FFTW_ROOT "C:/fftw-3.3.5-dll64")
-
-target_include_directories(pbb_fmm3d PUBLIC 
-	"include" 
-	"${MKL_ROOT}/include"
-	#${FFTW_ROOT}
-	"${MKL_ROOT}/include/fftw"
-	)
-
+set(MKL_ROOT 
+	"C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows")
+target_include_directories(pbb_fmm3d PUBLIC
+	"${MKL_ROOT}/mkl/include"
+	"${MKL_ROOT}/mkl/include/fftw")
 target_link_directories(pbb_fmm3d PUBLIC
-        "${MKL_ROOT}/lib/intel64"
-        "${FFTW_ROOT}"
-        )
-
-target_link_libraries(pbb_fmm3d
-    mkl_rt
-    mkl_lapack95_lp64
-		#mkl_core
-    mkl_intel_lp64
-    mkl_sequential
-    #mkl_blas95_lp64
-    #mkl_intel_ilp64
-    #mkl_intel_lp64
-    #mkl_intel_thread
-    #mkl_lapack95_ilp64
-    #mkl_tbb_thread
-    #fftw3
-    )
+	"${MKL_ROOT}/redist/intel64/mkl"
+	"${MKL_ROOT}/mkl/lib/intel64")
+target_link_libraries(pbb_fmm3d mkl_rt)
 
 set(MPI_ROOT "C:/Program Files (x86)/IntelSWTools/mpi/2019.6.166/intel64")
 target_include_directories(pbb_fmm3d PUBLIC "${MPI_ROOT}/include")
@@ -65,24 +39,24 @@ target_link_libraries(pbb_fmm3d optimized "release/impi")
 
 set_target_properties(pbb_fmm3d PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS 1)
 
-# 
-# # test
-# file(COPY test/data DESTINATION .)
-# add_executable(cdf_cpp_test test/cdf_cpp_test.cpp)
-# target_link_libraries(cdf_cpp_test cdf_cpp)
-# 
-# # cdf distribution test
-# #
-# #enable_testing()
-# #function(cdf_test n)
-# #    add_executable(${n} tests/${n}.c)
-# #    target_link_libraries(${n} cdf)
-# #    add_test(NAME ${n} COMMAND ${n})
-# #endfunction()
-# #
-# #cdf_test(qst2c)
-# #cdf_test(qst2cOrig)
-# #cdf_test(qst2ic)
-# #cdf_test(qst2icEPOCH16)
-# #cdf_test(qst2icTT2000)
-# #cdf_test(qst2Version)
+
+function(add_example name file)
+	add_executable(${name}
+		"examples/${file}")
+	target_link_libraries(${name} pbb_fmm3d)
+endfunction()
+
+add_example(get_input_through_routine_mykernel
+	get_input_through_routine_mykernel.cpp)
+
+add_example(get_input_through_routine_standard_kernel
+	get_input_through_routine_standard_kernel.cpp)
+
+add_example(binary_file_mykernel
+	binary_file_mykernel.cpp)
+
+add_example(binary_file_standard_kernel
+	binary_file_standard_kernel.cpp)
+
+add_example(tomography
+	3d_exp_cov.cpp)

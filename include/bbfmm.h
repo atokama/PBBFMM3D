@@ -49,7 +49,7 @@ typedef struct _point2 {
 typedef double timeType;
 
 /* Uniform random number generator */
-#define frand(xmin,xmax) ((double)xmin+(double)(xmax-xmin)*rand()/ \
+#define frand(xmin,xmax) ((double)xmin+(double)(xmax-(xmin))*rand()/ \
 (double)RAND_MAX) 
 
 /*

@@ -9,7 +9,7 @@ public:
         symmetry = 1;
         kernelType = "myKernel";
     }
-    virtual double EvaluateKernel(vector3& targetpos, vector3& sourcepos) {
+    double EvaluateKernel(vector3& targetpos, vector3& sourcepos) override {
         vector3 diff;        
         // Compute 1/r
         diff.x = sourcepos.x - targetpos.x;
