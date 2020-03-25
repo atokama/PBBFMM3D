@@ -1,5 +1,7 @@
 
 #include "bbfmm3d.hpp"
+#include <filesystem>
+namespace fs = std::filesystem;
 
 class myKernel: public H2_3D_Tree {
 public:
@@ -38,15 +40,15 @@ int main(int argc, char *argv[]) {
     double eps = 1e-5 ;         // Target accuracy (SVD)
     int use_chebyshev = 1;      // 1: chebyshev interpolation; 0: uniform interpolation
     
-    string filenameMetadata = "./../input/metadata_test.txt";
+    string filenameMetadata = (fs::path{ "." } / ".." / "input" / "metadata_test.txt").string();
     read_Metadata(filenameMetadata, L, interpolation_order, Ns, Nf, nCols, tree_level);
     std::vector<vector3> source(Ns); // Position array for the source points
     std::vector<vector3> target(Nf);  // Position array for the target points
     std::vector<double> weight(Ns*nCols); // Weight 
 
-    string filenameField  = "./../input/field_test.bin";
-    string filenameSource = "./../input/source_test.bin";
-    string filenameCharge = "./../input/charge_test.bin";
+    string filenameField  = (fs::path{ "." } / ".." / "input" / "field_test.bin").string();
+    string filenameSource = (fs::path{ "." } / ".." / "input" / "source_test.bin").string();
+    string filenameCharge = (fs::path{ "." } / ".." / "input" / "charge_test.bin").string();
     read_Sources(filenameField,target,Nf,filenameField,source,Ns,filenameCharge,weight,nCols);
     double err;
     std::vector<double> output(Nf*nCols);
@@ -75,7 +77,7 @@ int main(int argc, char *argv[]) {
 
 
     /*****      output result to binary file    ******/
-    string outputfilename = "../output/output.bin";
+    string outputfilename = (fs::path{ ".." } / "output" / "output.bin").string();
     write_Into_Binary_File(outputfilename, &output[0], nCols*Nf);
     /**********************************************************/
     /*                                                        */

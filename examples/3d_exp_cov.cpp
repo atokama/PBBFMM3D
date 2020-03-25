@@ -1,6 +1,8 @@
 
 #include "bbfmm3d.hpp"
 #include <iostream>
+#include <filesystem>
+namespace fs = std::filesystem;
 
 void SetMetaData(double& L, int& interpolation_order, int& Ns, int& Nf, int& nCols, int& tree_level, double& eps, int& nx, int& ny, int& nz) {
 //		read from parameters.txt
@@ -11,7 +13,7 @@ void SetMetaData(double& L, int& interpolation_order, int& Ns, int& Nf, int& nCo
 
 	ifstream fin;
 	
-	string filename = "../input/parameters.txt";
+	string filename = (fs::path{ ".." } / "input" / "parameters.txt").string();
 
 	fin.open(filename.c_str());
 	
@@ -110,7 +112,10 @@ void SetSources(std::vector<vector3>& target, int Nf, std::vector<vector3>& sour
         }
     }
 
-	read_xyz("../input/xcoord.txt",nx,"../input/ycoord.txt",ny,"../input/zcoord.txt",nz, source);
+	read_xyz(
+		(fs::path{ ".." } / "input" / "xcoord.txt").string() ,nx,
+		(fs::path{ ".." } / "input" / "ycoord.txt").string() ,ny,
+		(fs::path{ ".." } / "input" / "zcoord.txt").string() ,nz, source);
 
 	for (i=0;i<Nf;i++) {
 		target[i].x = source[i].x;
@@ -221,7 +226,7 @@ int main(int argc, char *argv[]) {
 
 
 	/*****      output result to binary file    ******/
-    string outputfilename = "../output/output.bin";
+	string outputfilename = (fs::path{ ".." } / "output" / "output.bin").string();
     write_Into_Binary_File(outputfilename, &output[0], nCols*Nf);
     
 	cout << "Pre-computation time: " << tPre << endl;

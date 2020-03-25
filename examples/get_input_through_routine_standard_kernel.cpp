@@ -41,14 +41,14 @@ int main(int argc, char *argv[]) {
     /*              Initializing the problem                  */
     /*                                                        */
     /**********************************************************/
-    double L;                   // Length of simulation cell (assumed to be a cube)
-    int interpolation_order;    // Number of interpolation nodes per dimension
-    int Ns;                     // Number of sources in simulation cell
-    int Nf;                     // Number of targets in simulation cell
-    int nCols;
-    int tree_level;
-    double eps;
-    int use_chebyshev;
+    double L = 27;                   // Length of simulation cell (assumed to be a cube)
+    int interpolation_order = 4;    // Number of interpolation nodes per dimension
+    int Ns = 3;                     // Number of sources in simulation cell
+    int Nf = 3;                     // Number of targets in simulation cell
+    int nCols = 5;
+    int tree_level = 2;
+    double eps = 1e-2;
+    int use_chebyshev = 1;
 
       // parse input arguments
     if (argc > 1) {

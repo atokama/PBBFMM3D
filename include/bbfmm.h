@@ -27,7 +27,7 @@
 
 // 3d point
 typedef struct _vector3 {
-	_vector3() {}
+	_vector3() : x{}, y{}, z{} {}
 	_vector3(double x, double y, double z) : x(x), y(y), z(z) {}
 	double x;
 	double y;

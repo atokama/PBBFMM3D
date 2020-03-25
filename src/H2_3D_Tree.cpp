@@ -6,12 +6,14 @@
 //#include"bbfmm.h"
 #include <mkl_lapack_stdcall.h>
 #include <mkl_blas_stdcall.h>
+#include <filesystem>
 
 #define HOMO_THRESHOLD  1e-1          // threshold for homogeneous kenrel
 #define FFTW_FLAG       FFTW_ESTIMATE // option for fftw plan type
 
 
-H2_3D_Tree::H2_3D_Tree(double L, int tree_level, int interpolation_order,  double epsilon, int use_chebyshev){
+H2_3D_Tree::H2_3D_Tree(double L, int tree_level, int interpolation_order,  double epsilon, int use_chebyshev)
+    : Kmat{}, Ktable{}, Ucomp{}, Umat{}, Vcomp{}, Vmat{}, cutoff{}, dofn3_f{}, dofn3_s{}, homogen{}, symmetry{} {
     this->dof = new doft;
     this->L     =   L;
     this->tree_level =   tree_level;
@@ -83,11 +85,11 @@ void H2_3D_Tree::PrecomputeM2L(double *Kweights, double boxLen, double alpha,
   char Vmat[50];
 
   if (use_chebyshev) {
-    sprintf(Kmat,"./../output/%sChebK%d.bin", kernelType.c_str(), interpolation_order);
-    sprintf(Umat,"./../output/%sChebU%d.bin", kernelType.c_str(), interpolation_order);
-    sprintf(Vmat,"./../output/%sChebV%d.bin", kernelType.c_str(), interpolation_order);
+    sprintf(Kmat,".\\..\\output\\%sChebK%d.bin", kernelType.c_str(), interpolation_order);
+    sprintf(Umat,".\\..\\output\\%sChebU%d.bin", kernelType.c_str(), interpolation_order);
+    sprintf(Vmat,".\\..\\output\\%sChebV%d.bin", kernelType.c_str(), interpolation_order);
   } else {
-    sprintf(Kmat,"./../output/%sUnifK%d.bin", kernelType.c_str(), interpolation_order);
+    sprintf(Kmat,".\\..\\output\\%sUnifK%d.bin", kernelType.c_str(), interpolation_order);
     sprintf(Umat,"bbfmm.c"); // uniform grid does not have U or V file,
     sprintf(Vmat,"bbfmm.c"); // so just make sure these two files exist
   }
@@ -218,7 +220,7 @@ void H2_3D_Tree::FMMReadMatrices(double **K, double **U, double **VT, doft *cuto
 
     Usize = cutoff->f * interpolation_order*interpolation_order*interpolation_order * preCompLevel;
     Vsize = cutoff->s * interpolation_order*interpolation_order*interpolation_order * preCompLevel;
-    Ksize = 316 * cutoff->f*cutoff->s * preCompLevel;
+    Ksize = 316. * cutoff->f*cutoff->s * preCompLevel;
     
     *U  = (double *)malloc(Usize *sizeof(double)); 
     *VT = (double *)malloc(Vsize *sizeof(double));
@@ -261,7 +263,7 @@ void H2_3D_Tree::ComputeKernelCheb(double *Kweights, int interpolation_order,dou
     int interpolation_order3 = interpolation_order*interpolation_order*interpolation_order;            // n3 = n^3
     int dofn3_s = n3;
     int dofn3_f = n3;
-    size_t dof2n6 = dofn3_s * dofn3_f; // Total size
+    size_t dof2n6 = 1. * dofn3_s * dofn3_f; // Total size
     int Sigma_size;
     doft cutoff;
 	
