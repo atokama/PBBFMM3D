@@ -8,7 +8,8 @@ if (MSVC)
 	set(CMAKE_SUPPRESS_REGENERATION ON)
 endif()
 
-file(GLOB incl RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} include/*.hpp)
+file(GLOB incl RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} 
+	include/*.hpp include/*.h)
 source_group("Include Files" FILES ${incl})
 
 set(src src/kernel_Types.cpp
